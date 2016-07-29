@@ -12,7 +12,8 @@ def main():
 	print(" 3 - view dweller               ")
 	print(" 4 - add note to dweller        ")
 	print(" 5 - add title to dweller       ")
-	print(" 6 - exit                       ")
+	print(" 6 - add occupation to dweller  ")
+	print(" 7 - exit                       ")
 	print("--------------------------------")
 	inputt = raw_input("-> ")
 	if(inputt == '1'):
@@ -26,6 +27,8 @@ def main():
 	elif(inputt == '5'):
 		title_dweller()
 	elif(inputt == '6'):
+		occupation_dweller()
+	elif(inputt == '7'):
 		return 0
 	else:
 		print("    exiting...")
@@ -43,11 +46,12 @@ def new_dweller():
 	
 	filename = name.split()
 	filename = ''.join(filename)
-	filename += ".txt"
-	filename = "dwellers/"+filename	
+	filename = "dwellers/"+filename+".txt"	
 
 	filetext = name+"%"+father+"%"+mother	
-		
+	filetext += '\n'
+	filetext += '\n'		
+	
 	with open(filename,'w') as file:
 		file.write(filetext)
 	clearScr()
@@ -98,6 +102,19 @@ def view_dweller():
 		print("father: "+dweller_list[choosen_index].father)
 		print("mother: "+dweller_list[choosen_index].mother)
 
+		print("Titles("+str(len(dweller_list[choosen_index].title_list))+"): ")
+		for i in range(len(dweller_list[choosen_index].title_list)):
+			print("    "+dweller_list[choosen_index].title_list[i])
+
+		print("Occupation("+str(len(dweller_list[choosen_index].occupation_list))+"): ")
+		for i in range(len(dweller_list[choosen_index].occupation_list)):
+			print("    "+dweller_list[choosen_index].occupation_list[i])
+		
+		print("Notes("+str(len(dweller_list[choosen_index].note_list))+"): ")
+		for i in range(len(dweller_list[choosen_index].note_list)):
+			print("    "+dweller_list[choosen_index].note_list[i])
+
+
 		print("---------------------------------")
 		print("1- menu | 2- exit ")
 		inputt = raw_input("-> ")
@@ -114,6 +131,28 @@ def note_dweller():
 	clearScr()
 	print("----fallout shelter database----")
 	print("----: add note :-------------")
+	inp = raw_input("dweller name: ")
+	valid = False
+	choosen_index = 0
+	for i in range(len(dweller_list)):
+		if(inp == dweller_list[i].name):
+			valid = True
+			choosen_index = i
+	if(valid):
+		clearScr()
+		print("----fallout shelter database----")
+		print("----: add note :------------")
+		notte = raw_input("note: ")
+		dweller_list[choosen_index].note_list.append(notte)
+		clearScr()
+		print("----fallout shelter database----")
+		print("----: add note :------------")
+		nn = raw_input("	saved		")
+		saveDwellers()		
+		main()
+	else:
+		a = raw_input("name not found")
+		main()	
 		
 # 5 - add title to dweller	
 def title_dweller():
@@ -132,11 +171,44 @@ def title_dweller():
 		print("----fallout shelter database----")
 		print("----: add title :------------")
 		titl = raw_input("title: ")
-		#add title to file procedure	
+		dweller_list[choosen_index].title_list.append(titl)
+		clearScr()
+		print("----fallout shelter database----")
+		print("----: add title :------------")
+		nn = raw_input("	saved		")
+		saveDwellers()		
 		main()
 	else:
 		a = raw_input("name not found")
 		main()	
+
+# 6 - add occupation to dweller
+def occupation_dweller():
+	clearScr()
+	print("----fallout shelter database----")
+	print("----: add occupation :-------------")
+	inp = raw_input("dweller name: ")
+	valid = False
+	choosen_index = 0
+	for i in range(len(dweller_list)):
+		if(inp == dweller_list[i].name):
+			valid = True
+			choosen_index = i
+	if(valid):
+		clearScr()
+		print("----fallout shelter database----")
+		print("----: add occupation :------------")
+		titl = raw_input("occupation: ")
+		dweller_list[choosen_index].occupation_list.append(titl)
+		clearScr()
+		print("----fallout shelter database----")
+		print("----: add occupation :------------")
+		nn = raw_input("	saved		")
+		saveDwellers()		
+		main()
+	else:
+		a = raw_input("name not found")
+		main()		
 	
 #end of menu entries
 def clearScr():
@@ -155,7 +227,56 @@ def loadDwellers():
 		name = filetxt.split('\n')[0].split('%')[0]
 		father = filetxt.split('\n')[0].split('%')[1]
 		mother = filetxt.split('\n')[0].split('%')[2]		
+
+		t_list = filetxt.split('\n')[1].split(';')				
+		if(len(t_list)>0):		
+			del t_list[len(t_list)-1]
+
+		o_list = filetxt.split('\n')[2].split(';')
+		if(len(o_list)>0):
+			del o_list[len(o_list)-1]
+		
+		n_list = filetxt.split('\n')[3].split(';')
+		if(len(n_list)>0):
+			del n_list[len(n_list)-1]
+
 		dweller_list.append(Dweller(name,father,mother))
+			
+		for t in range(len(t_list)):
+			dweller_list[len(dweller_list)-1].title_list.append(t_list[t])	
+
+		for o in range(len(o_list)):
+			dweller_list[len(dweller_list)-1].occupation_list.append(o_list[o])
+
+		for n in range(len(n_list)):
+			dweller_list[len(dweller_list)-1].note_list.append(n_list[n])		
+		
+def saveDwellers():
+	global dweller_list
+	dw_count = len(dweller_list)
+	for i in range(dw_count):
+		fname = dweller_list[i].name
+		fname = fname.split()
+		fname = ''.join(fname)
+		fname = "dwellers/"+fname+".txt"
+
+		filetext = dweller_list[i].name+"%"+dweller_list[i].father+"%"+dweller_list[i].mother
+		filetext += '\n'
+
+		for title_i in range(len(dweller_list[i].title_list)):
+			filetext += dweller_list[i].title_list[title_i]+";"
+
+		filetext += '\n'		
+		for occ_i in range(len(dweller_list[i].occupation_list)):
+			filetext += dweller_list[i].occupation_list[occ_i]+";"				
+		
+		filetext += '\n'
+		for note_i in range(len(dweller_list[i].note_list)):
+			filetext += dweller_list[i].note_list[note_i]+";"		
+					
+		with open(fname,'w') as file:
+			file.write(filetext)
+			
 	
 main()
 clearScr()
