@@ -1,3 +1,4 @@
+#!/usr/bin/python
 from falloutShelter import Dweller
 from os import walk
 
@@ -49,9 +50,9 @@ def new_dweller():
 	filename = "dwellers/"+filename+".txt"	
 
 	filetext = name+"%"+father+"%"+mother	
-	filetext += '\n'
-	filetext += '\n'		
-	
+	for i in range(10):	
+		filetext += '\n'
+
 	with open(filename,'w') as file:
 		file.write(filetext)
 	clearScr()
